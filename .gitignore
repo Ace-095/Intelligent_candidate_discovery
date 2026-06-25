@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.pyc
+.DS_Store
+gsd-template/
+submission.csv
+*.egg-info/
+.venv/
+venv/
+lib/models/
+.gsd/
+.agent/
+.claude/
+.gemini/
+.graphify/
+graphify-out/
+
+# Datasets and external data
+AI_DATA/
+holdout.jsonl
+holdout_human.csv
+holdout_labels.csv
+honeypot_analysis_report.json

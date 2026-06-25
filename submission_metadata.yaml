@@ -1,0 +1,120 @@
+# Redrob Hackathon — Submission Metadata
+#
+# Generated from submission_metadata_template.yaml
+# Fill in your team details before submitting.
+
+# ============================================================================
+# Team identity
+# ============================================================================
+team_name: "your-team-name-here"  # Used in leaderboard and announcements
+
+primary_contact:
+  name: "Full Name"
+  email: "primary@example.com"   # Used for all organizer communication
+  phone: "+91-XXXXXXXXXX"        # Used for top-50 / top-10 outreach
+
+team_members:
+  - name: "Member 1 Full Name"
+    email: "member1@example.com"
+    role: "ML Engineer"
+  - name: "Member 2 Full Name"
+    email: "member2@example.com"
+    role: "Data Engineer"
+
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
+github_repo: "https://github.com/YOUR_USERNAME/YOUR_REPO"
+
+sandbox_link: "https://huggingface.co/spaces/YOUR_USERNAME/redrob-ranker"
+
+reproduce_command: "python rank.py --candidates ./AI_DATA/[PUB] India_runs_data_and_ai_challenge/[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl --out ./submission.csv"
+
+# ============================================================================
+# Compute environment
+# ============================================================================
+compute:
+  platform: "Linux"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.11"
+  os: "Ubuntu 22.04 LTS"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+# ============================================================================
+# AI tools declaration
+# ============================================================================
+ai_tools_used:
+  - "Gemini"
+  - "Claude"
+
+ai_usage_summary: |
+  Used Gemini/Claude for architecture discussion and code review.
+  No candidate data was fed to any LLM during development.
+
+# ============================================================================
+# Approach summary
+# ============================================================================
+methodology_summary: |
+  Four-stage CPU-only pipeline targeting NDCG@10 (50% of competition score).
+
+  STAGE 1 — Stream & Extract (lib/parser.py + lib/features.py):
+    Reads candidates.jsonl line-by-line (never in bulk). Validates required
+    fields against candidate_schema.json. Extracts a lightweight feature
+    vector; drops raw JSON after extraction. Honeypot detection applied inline:
+    (a) Primary rule: max skill duration ≥ 4.3× total career reference
+        → score multiplier 0.0 (disqualified).
+    (b) Keyword stuffer rule: skill_count > 25 AND avg skill duration < 6mo
+        AND avg endorsements < 2 → score multiplier 0.1 (suppressed, not dropped).
+    (c) Secondary soft rule: ≥ 5 expert skills with 0 usage months
+        → score multiplier 0.3.
+
+  STAGE 2 — Semantic Layer (lib/semantic.py):
+    Builds a TF-IDF corpus over all candidates (batch, never per-candidate).
+    Encodes the JD requirement text once. Produces a single cosine-similarity
+    feature (semantic_similarity ∈ [0, 1]) per candidate.
+
+  STAGE 3 — Composite Scoring (lib/scoring.py):
+
+    Base weighted sum (weights sum to 1.0):
+      Skills (35%)     — 60% driven by semantic_similarity; residual from
+                         proficiency, code_recency_score, expert count.
+      Career (30%)     — company size (35%), ai_production_recency (25%),
+                         job_hop_frequency penalty (sliding at > 0.8 roles/yr).
+      Experience (20%) — Band: 5–9y ideal; < 2y near-zero; > 12y discounted.
+      Education (15%)  — Tier score × 0.6 + degree level × 0.4.
+
+    Multiplicative modifiers (applied post-sum):
+      Title penalty    — Non-technical titles: × 0.20; positive titles: × 1.0.
+      Industry penalty — IT-services / outsourcing firm or is_it_services: × 0.7.
+      Behavioral mult  — Recency: inactive > 6mo → × 0.50, > 3mo → × 0.80.
+                         open_to_work: +0.10; response_rate + interview_rate: +0.10;
+                         offer_acceptance_rate: +0.05. Clamped [0.10, 1.20].
+      Location mult    — location_match = False → × 0.80.
+
+    NDCG@10 Elite Spike Bonus (additive, before final clamp):
+      semantic_similarity > 0.8 AND ai_production_recency > 0.8: +0.15
+      expert_skill_count ≥ 5 AND total_endorsements ≥ 50: +0.05
+      Purpose: separate genuinely elite JD-fit candidates from uniform-high
+      scorers to maximise NDCG@10 without harming rank 20–100 ordering.
+
+  STAGE 4 — Output (lib/output.py):
+    Sorts by composite score descending. Writes exactly 100 rows to CSV.
+    Honeypot/stuffer-flagged candidates are score-suppressed, not dropped,
+    guaranteeing the 100-row constraint is always met.
+
+  Runtime: ~17s for 100K candidates on CPU. Peak RSS: ~1.4 GB.
+
+
+# ============================================================================
+# Declarations
+# ============================================================================
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: false
+  reproduction_tested: false

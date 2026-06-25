@@ -1,0 +1,19 @@
+# Redrob Hackathon — Ranking Pipeline Dependencies
+# All dependencies are pinned for reproducibility.
+# Run: pip install -r requirements.txt
+
+# Core data processing
+pandas==2.2.0
+numpy==1.26.4
+
+# Machine learning & similarity
+scikit-learn==1.4.0
+
+# System monitoring (memory/CPU profiling)
+psutil==5.9.8
+
+# YAML parsing for metadata
+PyYAML==6.0.1
+
+# Progress bars (useful for processing 100K candidates)
+tqdm==4.66.2

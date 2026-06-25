@@ -24,7 +24,7 @@ team_members:
 # ============================================================================
 github_repo: "https://github.com/Ace-095/Intelligent_candidate_discovery"
 
-sandbox_link: "https://hub.docker.com/r/asefier/redrob-ranker"
+sandbox_link: "docker pull asefier/redrob-ranker:latest && docker run --rm --network none asefier/redrob-ranker:latest"
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
@@ -35,7 +35,7 @@ compute:
   platform: "Linux"
   cpu_cores: 8
   ram_gb: 16
-  python_version: "3.11"
+  python_version: "3.12"
   os: "Ubuntu 22.04 LTS"
   uses_gpu_for_inference: false
   has_network_during_ranking: false
@@ -59,7 +59,7 @@ ai_usage_summary: |
 methodology_summary: |
   Four-stage CPU-only pipeline targeting NDCG@10 (50% of competition score).
 
-  STAGE 1 — Stream & Extract (lib/parser.py + lib/features.py):
+  STAGE 1 — Stream & Extract (lib/parsing.py + lib/features.py):
     Reads candidates.jsonl line-by-line (never in bulk). Validates required
     fields against candidate_schema.json. Extracts a lightweight feature
     vector; drops raw JSON after extraction. Honeypot detection applied inline:
@@ -114,5 +114,5 @@ declarations:
   read_submission_spec: true
   code_is_original_work: true
   no_collusion: true
-  honeypot_check_done: false
-  reproduction_tested: false
+  honeypot_check_done: true
+  reproduction_tested: true

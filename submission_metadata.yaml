@@ -28,7 +28,7 @@ github_repo: "https://github.com/YOUR_USERNAME/YOUR_REPO"
 
 sandbox_link: "https://huggingface.co/spaces/YOUR_USERNAME/redrob-ranker"
 
-reproduce_command: "python rank.py --candidates ./AI_DATA/[PUB] India_runs_data_and_ai_challenge/[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl --out ./submission.csv"
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
 # ============================================================================
 # Compute environment

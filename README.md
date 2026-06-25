@@ -12,10 +12,13 @@ pip install -r requirements.txt
 
 Run the following command from the repository root to produce the submission CSV:
 
+> [!IMPORTANT]
+> **Data Requirement:** You must place the hackathon-provided `candidates.jsonl` file in the root of this repository before running the command.
+
 ```bash
 python rank.py \
-  --candidates "AI_DATA/[PUB] India_runs_data_and_ai_challenge/[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/candidates.jsonl" \
-  --out submission.csv
+  --candidates ./candidates.jsonl \
+  --out ./submission.csv
 ```
 
 The script will:
@@ -34,16 +37,16 @@ We provide a `Dockerfile` and a 100-candidate sample (`sample_candidates.jsonl`)
 
 ```bash
 # Build the image (Downloads NLP models at build time to enforce offline execution)
-docker build -t redrob-sandbox .
+docker build -t redrob-ranker .
 
 # Run the sandbox over the sample dataset
-docker run --rm -v $(pwd):/output redrob-sandbox
+docker run --rm --network none redrob-ranker
 ```
 
 ## Validate Submission
 
 ```bash
-python "AI_DATA/[PUB] India_runs_data_and_ai_challenge/[PUB] India_runs_data_and_ai_challenge/India_runs_data_and_ai_challenge/validate_submission.py" submission.csv
+python validate_submission.py submission.csv
 ```
 
 ## Output Format
@@ -67,10 +70,6 @@ This pipeline strictly passes all Hackathon constraints, as empirically verified
 - **Max 16GB RAM**: The streaming JSON parser and garbage-collected feature arrays restrict peak memory usage to **1.4 GB** maximum on a 100,000 candidate set.
 - **Max 5 minutes**: The entire 100k candidate pipeline, from JSON parse to CSV generation, executes in **<18.0 seconds** wall-clock time.
 - **No network access**: The `.gsd/` pipeline and `download_model.py` stage the SentenceTransformer models ahead of time. `HF_HUB_OFFLINE=1` is proven to pass the test suite in `test_constraints.sh`.
-
-## Incremental Git History (Stage 4 Check)
-
-The commit history in this repository documents a 13-Phase incremental journey. It serves as cryptographic proof of genuine, iterative development rather than a single copy-pasted dump. Review `git log` to see explicit phase-by-phase task completion.
 
 ## Repository Structure
 

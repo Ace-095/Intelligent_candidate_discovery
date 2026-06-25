@@ -69,7 +69,7 @@ This pipeline strictly passes all Hackathon constraints, as empirically verified
 - **CPU only**: No PyTorch/TensorFlow GPU modules are imported. Pure `scikit-learn` and CPU vectors.
 - **Max 16GB RAM**: The streaming JSON parser and garbage-collected feature arrays restrict peak memory usage to **1.4 GB** maximum on a 100,000 candidate set.
 - **Max 5 minutes**: The entire 100k candidate pipeline, from JSON parse to CSV generation, executes in **<18.0 seconds** wall-clock time.
-- **No network access**: The `.gsd/` pipeline and `download_model.py` stage the SentenceTransformer models ahead of time. `HF_HUB_OFFLINE=1` is proven to pass the test suite in `test_constraints.sh`.
+- **No network access**: The scoring pipeline relies entirely on local TF-IDF and heuristic algorithms with zero external downloads required at runtime. This is empirically proven to pass completely offline using `--network none` via `test_constraints.sh`.
 
 ## Repository Structure
 
